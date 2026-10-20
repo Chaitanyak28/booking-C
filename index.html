@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Fayora Films — Production Booking OS</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#0B0F17',
+              card: '#121826',
+              input: '#1A2333',
+              border: '#26334D',
+              blue: '#3B82F6',
+              blueLight: '#60A5FA',
+              accent: '#38BDF8',
+              success: '#10B981',
+              warning: '#F59E0B'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #080C14;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Custom thin scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0F17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #26334D;
+      border-radius: 9999px;
+    }
+
+    /* Touch chips */
+    .chip {
+      transition: all 0.15s ease-out;
+      user-select: none;
+    }
+    .chip:active {
+      transform: scale(0.96);
+    }
+    .chip.selected {
+      background-color: #2563EB;
+      color: #FFFFFF;
+      border-color: #60A5FA;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+      font-weight: 600;
+    }
+
+    /* iOS smooth inertia scrolling */
+    .smooth-scroll {
+      -webkit-overflow-scrolling: touch;
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col pb-24 lg:pb-8 selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-40 bg-[#0B0F17]/90 backdrop-blur-md border-b border-brand-border px-4 py-3">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-black text-sm shadow-md shadow-blue-500/20">
+          FF
+        </div>
+        <div>
+          <h1 class="text-sm sm:text-base font-bold text-white tracking-tight flex items-center gap-1.5">
+            FAYORA FILMS <span class="text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/30 px-1.5 py-0.5 rounded font-mono font-semibold">VIVEK OS</span>
+          </h1>
+          <p class="text-[10px] text-slate-400">Zero-Friction WhatsApp Booking Engine</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="resetForm()" class="px-2.5 py-1.5 rounded-lg bg-brand-input hover:bg-brand-border text-slate-300 text-xs font-medium border border-brand-border flex items-center gap-1 transition">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Clear
+        </button>
+        <button type="button" onclick="scrollToPreview()" class="lg:hidden px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1 shadow-md shadow-blue-600/30">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Message
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- FLOATING COPIED TOAST -->
+  <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 transform transition-all duration-300 -translate-y-20 opacity-0 pointer-events-none bg-slate-900 border border-emerald-500/60 text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2.5">
+    <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+      <i data-lucide="check" class="w-4 h-4"></i>
+    </div>
+    <span id="toast-text" class="text-xs font-semibold text-slate-100">WhatsApp message copy ho gaya!</span>
+  </div>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-1 max-w-6xl mx-auto w-full p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+    <!-- CONTROLS COLUMN (7 COLS ON DESKTOP, FULL ON MOBILE) -->
+    <div class="lg:col-span-7 space-y-4">
+
+      <!-- STEP 1: CLIENT & EVENT (AUTO FILL LOGIC) -->
+      <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
+        <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
+          <h2 class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="user-check" class="w-4 h-4 text-blue-400"></i> 1. Client & Contact (Instant Dropdown)
+          </h2>
+          <span class="text-[10px] text-slate-400">Auto-fills phone</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Repeat Client Select -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Select Repeat Client</label>
+            <select id="client-select" onchange="handleClientSelect(this.value)" class="w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 transition">
+              <!-- Rendered via JS -->
+            </select>
+            <input type="text" id="custom-client-input" placeholder="Type new client name..." class="hidden mt-2 w-full bg-brand-input border border-blue-500/60 rounded-xl px-3 py-2 text-xs text-white focus:outline-none" oninput="triggerUpdate()">
+          </div>
+
+          <!-- Contact Number -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Contact No</label>
+            <div class="relative">
+              <input type="tel" id="contact-no" placeholder="98XXXXXXXX" class="w-full bg-brand-input border border-brand-border rounded-xl pl-8 pr-3 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-blue-500 transition" oninput="triggerUpdate()">
+              <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-3"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event / Campaign Name -->
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1">Event / Campaign Name</label>
+          <input type="text" id="event-name" placeholder="e.g. Bar Content / GAP Brand Shoot / Prem Kutir" class="w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 transition" oninput="triggerUpdate()">
+        </div>
+      </section>
+
+
+      <!-- STEP 2: SHOOT DETAILS (DATE, TYPE, LOCATION) -->
+      <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
+        <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
+          <h2 class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="calendar" class="w-4 h-4 text-blue-400"></i> 2. Shoot Type, Date & Location
+          </h2>
+        </div>
+
+        <!-- Shoot Type Quick Chips -->
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1.5">Shoot Type (Tap to select)</label>
+          <div id="shoot-type-chips" class="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto smooth-scroll pr-1">
+            <!-- Chips rendered by JS -->
+          </div>
+          <input type="text" id="custom-shoot-type" placeholder="Or enter custom shoot type..." class="mt-2 w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500" oninput="triggerUpdate()">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <!-- Shoot Date -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Shoot Date (DD/MM/YYYY)</label>
+            <div class="relative">
+              <input type="text" id="shoot-date" placeholder="DD/MM/YYYY or 24-25/08/2026" class="w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-blue-500" oninput="triggerUpdate()">
+            </div>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <button type="button" onclick="setDatePreset('today')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white">Today</button>
+              <button type="button" onclick="setDatePreset('tomorrow')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white">Tomorrow</button>
+              <button type="button" onclick="setDatePreset('weekend')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white">Upcoming Weekend</button>
+            </div>
+          </div>
+
+          <!-- Location with Mumbai Quick Chips -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Location</label>
+            <input type="text" id="location-input" placeholder="e.g. Bandra / CST / Goregaon Nesco" class="w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500" oninput="triggerUpdate()">
+          </div>
+        </div>
+
+        <!-- Quick Location Pills -->
+        <div>
+          <span class="text-[10px] text-slate-400 block mb-1">Frequent Mumbai Locations:</span>
+          <div id="location-chips" class="flex flex-wrap gap-1.5">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </section>
+
+
+      <!-- STEP 3: DELIVERABLES & EDITING -->
+      <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
+        <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
+          <h2 class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="clapperboard" class="w-4 h-4 text-blue-400"></i> 3. Deliverables & Editing
+          </h2>
+
+          <!-- With Edit Yes/No Toggle -->
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-semibold text-slate-300">With Edit:</span>
+            <div class="flex bg-brand-input p-0.5 rounded-lg border border-brand-border">
+              <button type="button" id="edit-yes" onclick="setWithEdit('yes')" class="px-2.5 py-1 text-[11px] font-bold rounded-md bg-blue-600 text-white transition">Yes</button>
+              <button type="button" id="edit-no" onclick="setWithEdit('no')" class="px-2.5 py-1 text-[11px] font-semibold rounded-md text-slate-400 transition">No</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1.5">Tap deliverables to include (Creates • bullets):</label>
+          <div id="deliverable-chips" class="flex flex-wrap gap-1.5">
+            <!-- Chips rendered by JS -->
+          </div>
+          <input type="text" id="custom-deliverable" placeholder="+ Add custom deliverable item (press Enter)" class="mt-2 w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500" onkeydown="handleCustomDeliverableKey(event)">
+        </div>
+      </section>
+
+
+      <!-- STEP 4: RENTAL EQUIPMENT & FLUCTUATING RATES -->
+      <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
+        <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
+          <h2 class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="camera" class="w-4 h-4 text-blue-400"></i> 4. Outsource Rental Equipment
+          </h2>
+          <span class="text-[10px] text-amber-400">Rates Fluctuating (Manual)</span>
+        </div>
+
+        <!-- Vendor Selection -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Equipment Vendor</label>
+            <select id="vendor-select" onchange="handleVendorSelect(this.value)" class="w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
+              <option value="ADITYA">ADITYA</option>
+              <option value="Aditya / Prathmesh">Aditya / Prathmesh</option>
+              <option value="Rental Junction">Rental Junction</option>
+              <option value="In-House / None">In-House / None</option>
+              <option value="CUSTOM">+ Other Vendor Name...</option>
+            </select>
+            <input type="text" id="custom-vendor-input" placeholder="Type vendor name..." class="hidden mt-2 w-full bg-brand-input border border-blue-500/60 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none" oninput="triggerUpdate()">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Outsource Team (Optional)</label>
+            <input type="text" id="outsource-team" placeholder="e.g. DOP + Light Assistant" class="w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500" oninput="triggerUpdate()">
+          </div>
+        </div>
+
+        <!-- Gear Category Tabs -->
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1">Tap items you are renting:</label>
+          <div class="flex border-b border-brand-border gap-1 text-[11px] mb-2 font-medium">
+            <button type="button" onclick="switchGearTab('cameras')" id="tab-cameras" class="px-2.5 py-1 text-blue-400 border-b-2 border-blue-400">Cameras</button>
+            <button type="button" onclick="switchGearTab('lenses')" id="tab-lenses" class="px-2.5 py-1 text-slate-400">Lenses</button>
+            <button type="button" onclick="switchGearTab('lights')" id="tab-lights" class="px-2.5 py-1 text-slate-400">Lights & Audio</button>
+          </div>
+
+          <!-- Gear Chips Container -->
+          <div id="gear-tab-content" class="flex flex-wrap gap-1.5 min-h-[50px] p-1 bg-brand-input/40 rounded-xl border border-brand-border/60">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- Selected Rentals List with Manual Fluctuating Rate Inputs -->
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1.5">Selected Rentals & Rates (Enter manual price):</label>
+          <div id="selected-rentals-container" class="space-y-2">
+            <div class="text-[11px] text-slate-500 italic p-2 bg-brand-input/30 rounded-lg text-center">
+              No equipment selected. Tap chips above to add.
+            </div>
+          </div>
+
+          <!-- Total Equipment Rent Summary Strip -->
+          <div class="mt-3 p-2.5 rounded-xl bg-slate-900/90 border border-brand-border flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs">💰</span>
+              <span class="text-xs font-bold text-slate-200">Total Equipment Rent:</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="text-xs text-amber-400 font-mono font-bold">₹</span>
+              <span id="rental-total-display" class="text-xs text-amber-400 font-mono font-extrabold text-sm">500</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- STEP 5: TOTAL, ADVANCE, PENDING & NOTES -->
+      <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
+        <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
+          <h2 class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="indian-rupee" class="w-4 h-4 text-blue-400"></i> 5. Commercials & Notes
+          </h2>
+          <span class="text-[10px] text-emerald-400 font-mono font-semibold">Auto-calculated Pending</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Total Amount -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Total Amount</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-mono">₹</span>
+              <input type="number" id="total-amount" placeholder="0" class="w-full bg-brand-input border border-brand-border rounded-xl pl-7 pr-3 py-2.5 text-xs text-white font-mono font-bold focus:outline-none focus:border-blue-500" oninput="calculateFinance()">
+            </div>
+          </div>
+
+          <!-- Advance Paid -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Advance Paid</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-mono">₹</span>
+              <input type="number" id="advance-paid" placeholder="0" class="w-full bg-brand-input border border-brand-border rounded-xl pl-7 pr-3 py-2.5 text-xs text-white font-mono font-bold text-emerald-400 focus:outline-none focus:border-blue-500" oninput="calculateFinance()">
+            </div>
+          </div>
+
+          <!-- Pending Amount (Readonly Auto) -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Pending Amount</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-mono">₹</span>
+              <input type="text" id="pending-amount" readonly placeholder="0" class="w-full bg-slate-900 border border-brand-border rounded-xl pl-7 pr-3 py-2.5 text-xs text-amber-400 font-mono font-extrabold focus:outline-none cursor-not-allowed">
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1">Notes (Optional)</label>
+          <textarea id="booking-notes" rows="2" placeholder="e.g. Client requested 4K 60fps files on same-day SSD drive" class="w-full bg-brand-input border border-brand-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-500" oninput="triggerUpdate()"></textarea>
+        </div>
+      </section>
+
+    </div>
+
+
+    <!-- RIGHT COLUMN: 4. COPY-READY MESSAGE CARD (MATCHING USER SCREENSHOT) -->
+    <div class="lg:col-span-5" id="preview-section">
+      
+      <div class="bg-[#101726] border border-blue-500/30 rounded-2xl p-4 sm:p-5 shadow-2xl flex flex-col sticky top-20">
+        
+        <!-- Header matching Screenshot -->
+        <div class="flex items-center justify-between pb-3 border-b border-brand-border/80 mb-3">
+          <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+            <span>4. Copy-ready message</span>
+          </h3>
+          <span class="text-[10px] bg-blue-500/15 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30 font-medium">WhatsApp Sync</span>
+        </div>
+
+        <!-- Monospace Text Area Box matching Screenshot -->
+        <div class="relative bg-[#090D16] border border-slate-800 rounded-xl p-3 sm:p-4 mb-4">
+          <pre id="copy-preview-text" class="font-mono-code text-[12px] leading-relaxed text-slate-200 whitespace-pre-wrap select-all max-h-[460px] overflow-y-auto smooth-scroll pr-1 font-normal">
+🎬 PRODUCTION BOOKING
+
+Client Name: 
+Event Name: 
+Contact No: 
+
+Shoot Type : 
+Shoot Date: 
+Location: 
+
+Deliverables: 
+
+• 
+With edit (yes/no) : Yes
+
+Out Source Rental Equipment : 
+Equipment Vendor:- ADITYA
+
+Outsource team : - 
+
+Total Amount: ₹
+Advance Paid: ₹
+Pending Amount: ₹
+
+Notes: 
+          </pre>
+        </div>
+
+        <!-- Big Blue Copy Button (Matching user screenshot: "Message Copy Karo") -->
+        <button type="button" onclick="copyToClipboard()" class="w-full py-3.5 px-4 rounded-xl bg-[#5E8BFF] hover:bg-[#4D7CFA] active:bg-[#3B6BE8] text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-xl shadow-blue-600/30 transition transform active:scale-[0.98]">
+          <span class="text-lg">📋</span>
+          <span id="copy-btn-label">Message Copy Karo</span>
+        </button>
+
+        <!-- Secondary Mobile WhatsApp Direct Open -->
+        <div class="grid grid-cols-2 gap-2 mt-2.5">
+          <button type="button" onclick="sendDirectWhatsApp()" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i> Open in WhatsApp
+          </button>
+          <button type="button" onclick="saveToRecentLogs()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 border border-brand-border transition">
+            <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Save in History
+          </button>
+        </div>
+
+        <!-- Recent Logs Accordion -->
+        <div class="mt-4 pt-3 border-t border-brand-border">
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-2 font-medium">
+            <span class="flex items-center gap-1"><i data-lucide="history" class="w-3.5 h-3.5 text-blue-400"></i> Vivek's Recent Shoots</span>
+            <button onclick="clearHistory()" class="text-[10px] text-rose-400 hover:underline">Clear</button>
+          </div>
+          <div id="history-list" class="space-y-1.5 max-h-32 overflow-y-auto smooth-scroll pr-1 text-xs">
+            <p class="text-[11px] text-slate-500 italic py-1 text-center">No saved bookings yet.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MOBILE BOTTOM STICKY BAR (Only visible on small screens for quick action) -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F17]/95 backdrop-blur-md border-t border-brand-border p-2.5 flex items-center gap-2">
+    <button type="button" onclick="copyToClipboard()" class="flex-1 py-3 rounded-xl bg-[#5E8BFF] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/20 active:scale-95 transition">
+      <span>📋</span> Message Copy Karo
+    </button>
+    <button type="button" onclick="sendDirectWhatsApp()" class="w-12 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition">
+      <i data-lucide="send" class="w-5 h-5"></i>
+    </button>
+  </div>
+
+
+  <!-- APPLICATION JAVASCRIPT LOGIC -->
+  <script>
+    // 1. REPEAT CLIENTS DATABASE (From PDF Data)
+    const REPEAT_CLIENTS = [
+      { name: "DOT", phone: "8591325894", defaultType: "BAR CONTENT / REEL" },
+      { name: "Aryan Nalawade", phone: "9821036274", defaultType: "UGC REEL" },
+      { name: "Parag Jain", phone: "9699054808", defaultType: "BRAND SHOOT" },
+      { name: "Lisha Jain", phone: "8454977088", defaultType: "INFLUENCER REEL" },
+      { name: "Green Square", phone: "9004440942", defaultType: "INTERIOR PROPERTY SHOOT" },
+      { name: "Wadia Design Studio / Gaurav Wadia", phone: "9833008826", defaultType: "PREM KUTIR INTERIOR SHOOT" },
+      { name: "Paichu / Muhammed Fayis", phone: "8848175526", defaultType: "UGC REEL" },
+      { name: "Yamina Sapra", phone: "7828757705", defaultType: "BABY SHOWER" },
+      { name: "Shubham Bandivdekar", phone: "9167154222", defaultType: "POLITICIAN VIDEO COVERAGE" },
+      { name: "Reeya Mota", phone: "9820762668", defaultType: "BRAND COLLABORATION" },
+      { name: "Aishwarya Shukla", phone: "7977432815", defaultType: "STORE VISIT REEL" },
+      { name: "MBL", phone: "7045717701", defaultType: "PRODUCT SHOOT" },
+      { name: "Nanachowk cha Morya", phone: "9819364535", defaultType: "CINEMATIC VIDEO AND PHOTOS" },
+      { name: "Reenu Debnath", phone: "", defaultType: "REEL" },
+      { name: "Dhaval Fataniya", phone: "", defaultType: "REEL" },
+      { name: "Snehal", phone: "", defaultType: "BABY SHOWER TRADITIONAL PHOTO" },
+      { name: "Nirja Kamat", phone: "", defaultType: "UGC REEL" },
+      { name: "CUSTOM", phone: "", defaultType: "" }
+    ];
+
+    // 2. SHOOT TYPES (From Services screenshot & PDF)
+    const SHOOT_TYPES = [
+      "Reel", "UGC Reel", "Store Visit Reel", "Influencer Reel", "BTS Reel",
+      "Phone Reel", "Organic Reel", "Commercial Ad", "Cinematographer Only",
+      "Interior Property Shoot", "Product Shoot", "Baby Shower / Photo",
+      "Proposal Reel & Photos", "Politician Video Coverage", "Bar Content"
+    ];
+
+    // 3. MUMBAI QUICK LOCATIONS (From PDF)
+    const QUICK_LOCATIONS = [
+      "Goregaon", "Andheri West", "Bandra", "CST / Fort", "BKC",
+      "Lower Parel", "Borivali", "Thane", "Khar Road", "Worli", "Dadar", "All over Mumbai"
+    ];
+
+    // 4. DELIVERABLES (From Services screenshot)
+    const DELIVERABLES_LIST = [
+      { id: "del-reel-1", text: "1 Reel (9:16)", checked: true },
+      { id: "del-reel-2", text: "2 Reels (9:16)", checked: false },
+      { id: "del-reels-batch", text: "Batch of Reels (3-5 Reels)", checked: false },
+      { id: "del-cinematic", text: "Cinematic Video Cut", checked: false },
+      { id: "del-raw", text: "Raw Footage (Google Drive Link)", checked: true },
+      { id: "del-color", text: "Color Graded Master Cut", checked: true },
+      { id: "del-photos-10", text: "10-15 Edited Photos", checked: false },
+      { id: "del-photos-25", text: "25+ High-Res Photos", checked: false },
+      { id: "del-bts", text: "Behind The Scenes (BTS) Clips", checked: false },
+      { id: "del-only-shoot", text: "Only Shoot (No Edit)", checked: false }
+    ];
+
+    // 5. EQUIPMENT INVENTORY (From Validation Screenshots)
+    const GEAR_CATALOG = {
+      cameras: [
+        "A7M4", "A7M3", "A7M4 (2nd)", "Sony M3", "A7R4", "CANON R6", "CANON 5D"
+      ],
+      lenses: [
+        "16-35 2.8", "16-35 F4", "24-70 2.8", "24-70 F4", "24-105", 
+        "35 MM 1.4", "35 MM 1.4 (2nd)", "35 MM 1.8", "50 MM 1.8", "55 MM 1.8", 
+        "85 MM 1.4", "85 MM 1.8", "70-200 2.8"
+      ],
+      lights: [
+        "LC 500", "Nanlite", "Lapel Mic", "Shot gun mic", "FLASH", "GIMBLE", "Drone"
+      ]
+    };
+
+    // STATE
+    let selectedShootType = "Reel";
+    let withEditState = "Yes";
+    let currentGearTab = "cameras";
+    let selectedRentals = {
+      "16-35 2.8": "500",
+      "A7M4": ""
+    };
+
+    // ON DOM LOAD
+    document.addEventListener("DOMContentLoaded", () => {
+      initClientDropdown();
+      renderShootTypes();
+      renderLocationChips();
+      renderDeliverableChips();
+      renderGearTab(currentGearTab);
+      renderSelectedRentals();
+      loadHistory();
+      setDatePreset('tomorrow');
+      calculateFinance();
+      triggerUpdate();
+      lucide.createIcons();
+    });
+
+    // Populate Client Dropdown
+    function initClientDropdown() {
+      const select = document.getElementById("client-select");
+      select.innerHTML = '<option value="" disabled selected>-- Choose Client --</option>' +
+        REPEAT_CLIENTS.map(c => {
+          if (c.name === "CUSTOM") return `<option value="CUSTOM">+ Add New / Other Client...</option>`;
+          return `<option value="${c.name}">${c.name} ${c.phone ? '(' + c.phone.slice(-4) + ')' : ''}</option>`;
+        }).join('');
+    }
+
+    function handleClientSelect(val) {
+      const customInput = document.getElementById("custom-client-input");
+      const contactInput = document.getElementById("contact-no");
+      const eventInput = document.getElementById("event-name");
+
+      if (val === "CUSTOM") {
+        customInput.classList.remove("hidden");
+        customInput.focus();
+        contactInput.value = "";
+      } else {
+        customInput.classList.add("hidden");
+        const client = REPEAT_CLIENTS.find(c => c.name === val);
+        if (client) {
+          contactInput.value = client.phone || "";
+          if (client.defaultType && !eventInput.value) {
+            eventInput.value = client.defaultType;
+          }
+        }
+      }
+      triggerUpdate();
+    }
+
+    // Shoot Types Chips
+    function renderShootTypes() {
+      const container = document.getElementById("shoot-type-chips");
+      container.innerHTML = SHOOT_TYPES.map(type => `
+        <button type="button" onclick="selectShootType('${type}')" class="chip text-[11px] px-2.5 py-1.5 rounded-lg border border-brand-border bg-brand-input text-slate-300 ${type === selectedShootType ? 'selected' : ''}" id="st-${escapeId(type)}">
+          ${type}
+        </button>
+      `).join('');
+    }
+
+    function selectShootType(type) {
+      selectedShootType = type;
+      renderShootTypes();
+      triggerUpdate();
+    }
+
+    // Frequent Locations
+    function renderLocationChips() {
+      const container = document.getElementById("location-chips");
+      container.innerHTML = QUICK_LOCATIONS.map(loc => `
+        <button type="button" onclick="setLocation('${loc}')" class="text-[10px] px-2 py-1 rounded-md border border-brand-border bg-brand-input/70 text-slate-300 hover:text-white hover:border-blue-400/60 transition">
+          ${loc}
+        </button>
+      `).join('');
+    }
+
+    function setLocation(loc) {
+      document.getElementById("location-input").value = loc;
+      triggerUpdate();
+    }
+
+    // Date Presets
+    function setDatePreset(preset) {
+      const d = new Date();
+      if (preset === 'tomorrow') d.setDate(d.getDate() + 1);
+      if (preset === 'weekend') {
+        const day = d.getDay();
+        const diff = (6 - day + 7) % 7 || 7; // next saturday
+        d.setDate(d.getDate() + diff);
+      }
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      document.getElementById("shoot-date").value = `${day}/${month}/${year}`;
+      triggerUpdate();
+    }
+
+    // With Edit Toggle
+    function setWithEdit(val) {
+      withEditState = val === 'yes' ? 'Yes' : 'No';
+      const yesBtn = document.getElementById("edit-yes");
+      const noBtn = document.getElementById("edit-no");
+      if (val === 'yes') {
+        yesBtn.className = "px-2.5 py-1 text-[11px] font-bold rounded-md bg-blue-600 text-white transition";
+        noBtn.className = "px-2.5 py-1 text-[11px] font-semibold rounded-md text-slate-400 transition";
+      } else {
+        noBtn.className = "px-2.5 py-1 text-[11px] font-bold rounded-md bg-rose-600 text-white transition";
+        yesBtn.className = "px-2.5 py-1 text-[11px] font-semibold rounded-md text-slate-400 transition";
+      }
+      triggerUpdate();
+    }
+
+    // Deliverables Chips
+    function renderDeliverableChips() {
+      const container = document.getElementById("deliverable-chips");
+      container.innerHTML = DELIVERABLES_LIST.map(item => `
+        <button type="button" onclick="toggleDeliverable('${item.id}')" class="chip text-[11px] px-2.5 py-1.5 rounded-lg border border-brand-border bg-brand-input text-slate-300 ${item.checked ? 'selected' : ''}" id="${item.id}">
+          ${item.text}
+        </button>
+      `).join('');
+    }
+
+    function toggleDeliverable(id) {
+      const it = DELIVERABLES_LIST.find(d => d.id === id);
+      if (it) {
+        it.checked = !it.checked;
+        renderDeliverableChips();
+        triggerUpdate();
+      }
+    }
+
+    function handleCustomDeliverableKey(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if (val) {
+          const newId = 'del-' + Date.now();
+          DELIVERABLES_LIST.push({ id: newId, text: val, checked: true });
+          renderDeliverableChips();
+          e.target.value = '';
+          triggerUpdate();
+        }
+      }
+    }
+
+    // Gear Category Tabs & Selection
+    function switchGearTab(tab) {
+      currentGearTab = tab;
+      ['cameras', 'lenses', 'lights'].forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tab) {
+          btn.className = "px-2.5 py-1 text-blue-400 border-b-2 border-blue-400 font-bold";
+        } else {
+          btn.className = "px-2.5 py-1 text-slate-400 hover:text-slate-300";
+        }
+      });
+      renderGearTab(tab);
+    }
+
+    function renderGearTab(tab) {
+      const container = document.getElementById("gear-tab-content");
+      const items = GEAR_CATALOG[tab] || [];
+      container.innerHTML = items.map(name => {
+        const isSelected = selectedRentals.hasOwnProperty(name);
+        return `
+          <button type="button" onclick="toggleRentalItem('${name}')" class="chip text-[11px] px-2.5 py-1 rounded-lg border border-brand-border bg-brand-input text-slate-300 ${isSelected ? 'selected' : ''}">
+            ${name}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleRentalItem(name) {
+      if (selectedRentals.hasOwnProperty(name)) {
+        delete selectedRentals[name];
+      } else {
+        selectedRentals[name] = ""; // empty initial rate
+      }
+      renderGearTab(currentGearTab);
+      renderSelectedRentals();
+      triggerUpdate();
+    }
+
+    function updateRentalRate(name, val) {
+      selectedRentals[name] = val;
+      triggerUpdate();
+    }
+
+    function removeRentalItem(name) {
+      delete selectedRentals[name];
+      renderGearTab(currentGearTab);
+      renderSelectedRentals();
+      triggerUpdate();
+    }
+
+    function renderSelectedRentals() {
+      const container = document.getElementById("selected-rentals-container");
+      const keys = Object.keys(selectedRentals);
+
+      if (keys.length === 0) {
+        container.innerHTML = `<div class="text-[11px] text-slate-500 italic p-2 bg-brand-input/30 rounded-lg text-center">No renting (In-house equipment only)</div>`;
+        updateRentalTotal();
+        return;
+      }
+
+      container.innerHTML = keys.map(k => `
+        <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-brand-input border border-brand-border text-xs">
+          <span class="font-semibold text-slate-200 truncate flex-1">${k}</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400 font-mono text-[11px]">:- ₹</span>
+            <input type="text" value="${selectedRentals[k]}" placeholder="Rate" class="w-20 bg-slate-900 border border-brand-border rounded-lg px-2 py-1 text-xs text-amber-400 font-mono font-bold focus:outline-none focus:border-blue-400" oninput="updateRentalRate('${k}', this.value)">
+            <button type="button" onclick="removeRentalItem('${k}')" class="text-slate-500 hover:text-rose-400 p-1" title="Remove">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+      updateRentalTotal();
+    }
+
+    // Calculate total equipment rent sum
+    function getCalculatedTotalRent() {
+      const keys = Object.keys(selectedRentals);
+      let sum = 0;
+      let hasAnyRate = false;
+      keys.forEach(k => {
+        const numericVal = parseFloat(selectedRentals[k]);
+        if (!isNaN(numericVal) && numericVal > 0) {
+          sum += numericVal;
+          hasAnyRate = true;
+        }
+      });
+      return { sum, hasAnyRate };
+    }
+
+    function updateRentalTotal() {
+      const { sum, hasAnyRate } = getCalculatedTotalRent();
+      const displayEl = document.getElementById("rental-total-display");
+      if (displayEl) {
+        displayEl.innerText = hasAnyRate ? sum : "0";
+      }
+    }
+
+    // Vendor handling
+    function handleVendorSelect(val) {
+      const customInput = document.getElementById("custom-vendor-input");
+      if (val === "CUSTOM") {
+        customInput.classList.remove("hidden");
+        customInput.focus();
+      } else {
+        customInput.classList.add("hidden");
+      }
+      triggerUpdate();
+    }
+
+    // Finance auto calculation
+    function calculateFinance() {
+      const total = parseFloat(document.getElementById("total-amount").value) || 0;
+      const advance = parseFloat(document.getElementById("advance-paid").value) || 0;
+      const pending = total - advance;
+      
+      const pendingInput = document.getElementById("pending-amount");
+      pendingInput.value = pending >= 0 ? pending : 0;
+      triggerUpdate();
+    }
+
+    // ASSEMBLE EXACT WHATSAPP MESSAGE FORMAT
+    function generateWhatsAppMessage() {
+      // 1. Client Name
+      const clientSelect = document.getElementById("client-select").value;
+      const clientName = clientSelect === "CUSTOM"
+        ? (document.getElementById("custom-client-input").value.trim() || "")
+        : (clientSelect || "");
+
+      // 2. Event Name
+      const eventName = document.getElementById("event-name").value.trim();
+
+      // 3. Contact No
+      const contactNo = document.getElementById("contact-no").value.trim();
+
+      // 4. Shoot Type
+      const customShootType = document.getElementById("custom-shoot-type").value.trim();
+      const shootType = customShootType || selectedShootType;
+
+      // 5. Shoot Date
+      const shootDate = document.getElementById("shoot-date").value.trim();
+
+      // 6. Location
+      const location = document.getElementById("location-input").value.trim();
+
+      // 7. Deliverables bullet points
+      const selectedDeliverables = DELIVERABLES_LIST.filter(d => d.checked).map(d => `• ${d.text}`);
+      const deliverablesText = selectedDeliverables.length > 0 ? selectedDeliverables.join("\n") : "• ";
+
+      // 8. With Edit
+      const withEdit = withEditState;
+
+      // 9. Rental Equipment lines
+      const rentalKeys = Object.keys(selectedRentals);
+      let rentalLines = "";
+      const { sum: totalRentSum, hasAnyRate } = getCalculatedTotalRent();
+
+      if (rentalKeys.length > 0) {
+        const itemLines = rentalKeys.map(k => {
+          const rate = selectedRentals[k] ? `${selectedRentals[k]}` : "";
+          return `${k}:- ${rate}`;
+        }).join("\n");
+
+        const rentTotalLine = hasAnyRate ? `\nTotal Rent:- ₹${totalRentSum}` : `\nTotal Rent:- `;
+        rentalLines = `${itemLines}\n${rentTotalLine}`;
+      } else {
+        rentalLines = "No renting\n\nTotal Rent:- ₹0";
+      }
+
+      // Vendor
+      const vendorSelect = document.getElementById("vendor-select").value;
+      const vendorName = vendorSelect === "CUSTOM"
+        ? (document.getElementById("custom-vendor-input").value.trim() || "ADITYA")
+        : vendorSelect;
+
+      // 10. Outsource team
+      const outsourceTeam = document.getElementById("outsource-team").value.trim();
+
+      // 11. Finance
+      const totalAmount = document.getElementById("total-amount").value.trim();
+      const advancePaid = document.getElementById("advance-paid").value.trim();
+      const pendingAmount = document.getElementById("pending-amount").value.trim();
+
+      // 12. Notes
+      const notes = document.getElementById("booking-notes").value.trim();
+
+      // Final Template Assembly matching user requirement
+      return `🎬 PRODUCTION BOOKING
+
+Client Name: ${clientName}
+Event Name: ${eventName}
+Contact No: ${contactNo}
+
+Shoot Type : ${shootType}
+Shoot Date: ${shootDate}
+Location: ${location}
+
+Deliverables: 
+
+${deliverablesText}
+With edit (yes/no) : ${withEdit}
+
+Out Source Rental Equipment : 
+${rentalLines}
+Equipment Vendor:- ${vendorName}
+
+Outsource team : - ${outsourceTeam}
+
+
+
+Total Amount: ${totalAmount ? '₹' + totalAmount : ''}
+Advance Paid: ${advancePaid ? '₹' + advancePaid : ''}
+Pending Amount: ${pendingAmount ? '₹' + pendingAmount : ''}
+
+Notes: ${notes}`;
+    }
+
+    // Update Live Preview box
+    function triggerUpdate() {
+      updateRentalTotal();
+      const msg = generateWhatsAppMessage();
+      document.getElementById("copy-preview-text").innerText = msg;
+    }
+
+    // 1-Click Clipboard Copy (Supports iFrame / Mobile Web)
+    function copyToClipboard() {
+      const text = generateWhatsAppMessage();
+      
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.top = "-9999px";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      let ok = false;
+      try {
+        ok = document.execCommand('copy');
+      } catch (err) {
+        ok = false;
+      }
+      document.body.removeChild(textArea);
+
+      // Button Label animation
+      const btnLabel = document.getElementById("copy-btn-label");
+      const origText = btnLabel.innerText;
+      btnLabel.innerText = "Copied to Clipboard! ✓";
+      setTimeout(() => { btnLabel.innerText = origText; }, 2000);
+
+      showToast("Message Copy Ho Gaya! WhatsApp pe paste karein.");
+    }
+
+    // Direct WhatsApp send
+    function sendDirectWhatsApp() {
+      const text = generateWhatsAppMessage();
+      const encoded = encodeURIComponent(text);
+      window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
+    }
+
+    // Save to LocalStorage History
+    function saveToRecentLogs() {
+      const clientSelect = document.getElementById("client-select").value;
+      const clientName = clientSelect === "CUSTOM"
+        ? (document.getElementById("custom-client-input").value.trim() || "New Client")
+        : (clientSelect || "General Shoot");
+
+      const item = {
+        id: Date.now(),
+        client: clientName,
+        event: document.getElementById("event-name").value || selectedShootType,
+        date: document.getElementById("shoot-date").value,
+        total: document.getElementById("total-amount").value,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      let history = [];
+      try {
+        history = JSON.parse(localStorage.getItem("fayora_shoot_logs")) || [];
+      } catch (e) { history = []; }
+
+      history.unshift(item);
+      if (history.length > 6) history.pop();
+      localStorage.setItem("fayora_shoot_logs", JSON.stringify(history));
+
+      loadHistory();
+      showToast("Booking history me save ho gayi!");
+    }
+
+    function loadHistory() {
+      const container = document.getElementById("history-list");
+      let history = [];
+      try {
+        history = JSON.parse(localStorage.getItem("fayora_shoot_logs")) || [];
+      } catch (e) { history = []; }
+
+      if (history.length === 0) {
+        container.innerHTML = `<p class="text-[11px] text-slate-500 italic py-1 text-center">No saved bookings yet.</p>`;
+        return;
+      }
+
+      container.innerHTML = history.map(h => `
+        <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-brand-border text-xs">
+          <div class="truncate pr-2">
+            <span class="font-bold text-white">${h.client}</span>
+            <span class="text-[10px] text-slate-400 block">${h.event} • ${h.date}</span>
+          </div>
+          <span class="text-[11px] text-emerald-400 font-mono font-bold">${h.total ? '₹' + h.total : ''}</span>
+        </div>
+      `).join('');
+    }
+
+    function clearHistory() {
+      localStorage.removeItem("fayora_shoot_logs");
+      loadHistory();
+      showToast("History clear ho gayi");
+    }
+
+    // Reset Form
+    function resetForm() {
+      document.getElementById("client-select").value = "";
+      document.getElementById("custom-client-input").classList.add("hidden");
+      document.getElementById("custom-client-input").value = "";
+      document.getElementById("contact-no").value = "";
+      document.getElementById("event-name").value = "";
+      document.getElementById("custom-shoot-type").value = "";
+      document.getElementById("location-input").value = "";
+      document.getElementById("total-amount").value = "";
+      document.getElementById("advance-paid").value = "";
+      document.getElementById("pending-amount").value = "";
+      document.getElementById("outsource-team").value = "";
+      document.getElementById("booking-notes").value = "";
+      
+      selectedRentals = { "16-35 2.8": "500", "A7M4": "" };
+      selectedShootType = "Reel";
+      setWithEdit("yes");
+      setDatePreset('tomorrow');
+      renderShootTypes();
+      renderGearTab(currentGearTab);
+      renderSelectedRentals();
+      triggerUpdate();
+      showToast("Form clear ho gaya");
+    }
+
+    // Toast UI
+    function showToast(text) {
+      const toast = document.getElementById("toast");
+      const toastText = document.getElementById("toast-text");
+      toastText.innerText = text;
+      toast.classList.remove("-translate-y-20", "opacity-0");
+      toast.classList.add("translate-y-0", "opacity-100");
+
+      setTimeout(() => {
+        toast.classList.remove("translate-y-0", "opacity-100");
+        toast.classList.add("-translate-y-20", "opacity-0");
+      }, 2300);
+    }
+
+    // Scroll to preview for mobile
+    function scrollToPreview() {
+      const el = document.getElementById("preview-section");
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function escapeId(str) {
+      return str.replace(/[^a-zA-Z0-9]/g, '_');
+    }
+  </script>
+</body>
+</html>
