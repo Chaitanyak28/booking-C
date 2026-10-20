@@ -17,15 +17,16 @@
         extend: {
           colors: {
             brand: {
-              dark: '#0B0F17',
-              card: '#121826',
+              dark: '#080C14',
+              card: '#111726',
+              cardInner: '#172033',
               input: '#1A2333',
-              border: '#26334D',
+              border: '#25324D',
               blue: '#3B82F6',
               blueLight: '#60A5FA',
               accent: '#38BDF8',
-              success: '#10B981',
-              warning: '#F59E0B'
+              emerald: '#10B981',
+              amber: '#F59E0B'
             }
           }
         }
@@ -55,7 +56,7 @@
       background: #0B0F17;
     }
     ::-webkit-scrollbar-thumb {
-      background: #26334D;
+      background: #25324D;
       border-radius: 9999px;
     }
 
@@ -71,7 +72,7 @@
       background-color: #2563EB;
       color: #FFFFFF;
       border-color: #60A5FA;
-      box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
       font-weight: 600;
     }
 
@@ -84,7 +85,7 @@
 <body class="text-slate-100 min-h-screen flex flex-col pb-24 lg:pb-8 selection:bg-blue-600 selection:text-white">
 
   <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 bg-[#0B0F17]/90 backdrop-blur-md border-b border-brand-border px-4 py-3">
+  <header class="sticky top-0 z-40 bg-[#0B0F17]/95 backdrop-blur-md border-b border-brand-border px-4 py-3">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-2.5">
         <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-black text-sm shadow-md shadow-blue-500/20">
@@ -99,10 +100,10 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <button type="button" onclick="resetForm()" class="px-2.5 py-1.5 rounded-lg bg-brand-input hover:bg-brand-border text-slate-300 text-xs font-medium border border-brand-border flex items-center gap-1 transition">
+        <button type="button" onclick="resetForm()" class="px-2.5 py-1.5 rounded-lg bg-brand-input hover:bg-brand-border text-slate-300 text-xs font-medium border border-brand-border flex items-center gap-1 transition active:scale-95">
           <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Clear
         </button>
-        <button type="button" onclick="scrollToPreview()" class="lg:hidden px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1 shadow-md shadow-blue-600/30">
+        <button type="button" onclick="scrollToPreview()" class="lg:hidden px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1 shadow-md shadow-blue-600/30 active:scale-95">
           <i data-lucide="eye" class="w-3.5 h-3.5"></i> Message
         </button>
       </div>
@@ -127,9 +128,9 @@
       <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
         <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
           <h2 class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
-            <i data-lucide="user-check" class="w-4 h-4 text-blue-400"></i> 1. Client & Contact (Instant Dropdown)
+            <i data-lucide="user-check" class="w-4 h-4 text-blue-400"></i> 1. Client & Contact
           </h2>
-          <span class="text-[10px] text-slate-400">Auto-fills phone</span>
+          <span class="text-[10px] text-emerald-400 font-medium">Auto-fills phone</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -160,12 +161,13 @@
       </section>
 
 
-      <!-- STEP 2: SHOOT DETAILS (DATE, TYPE, LOCATION) -->
+      <!-- STEP 2: SHOOT DETAILS (DATE WITH CALENDAR PICKER, TYPE, LOCATION) -->
       <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
         <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
           <h2 class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
             <i data-lucide="calendar" class="w-4 h-4 text-blue-400"></i> 2. Shoot Type, Date & Location
           </h2>
+          <span class="text-[10px] text-blue-400">Calendar Enabled</span>
         </div>
 
         <!-- Shoot Type Quick Chips -->
@@ -178,23 +180,37 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-          <!-- Shoot Date -->
+          <!-- Shoot Date with integrated Native Calendar Picker Button -->
           <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Shoot Date (DD/MM/YYYY)</label>
-            <div class="relative">
-              <input type="text" id="shoot-date" placeholder="DD/MM/YYYY or 24-25/08/2026" class="w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-blue-500" oninput="triggerUpdate()">
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-[11px] font-semibold text-slate-300">Shoot Date (DD/MM/YYYY)</label>
+              <span class="text-[10px] text-blue-400 font-medium">Tap 📅 for calendar</span>
             </div>
+            
+            <div class="relative flex items-center">
+              <input type="text" id="shoot-date" placeholder="DD/MM/YYYY or 24-25/08/2026" class="w-full bg-brand-input border border-brand-border rounded-xl pl-3 pr-11 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-blue-500 transition" oninput="triggerUpdate()">
+              
+              <!-- Interactive Calendar Icon Button (where circled) -->
+              <div class="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center">
+                <button type="button" onclick="openCalendarPicker()" class="p-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 hover:text-white border border-blue-500/30 transition flex items-center justify-center" title="Open Calendar">
+                  <i data-lucide="calendar" class="w-4 h-4"></i>
+                </button>
+                <input type="date" id="native-date-picker" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleCalendarSelection(this.value)">
+              </div>
+            </div>
+
+            <!-- Date Presets -->
             <div class="flex items-center gap-1.5 mt-1.5">
-              <button type="button" onclick="setDatePreset('today')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white">Today</button>
-              <button type="button" onclick="setDatePreset('tomorrow')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white">Tomorrow</button>
-              <button type="button" onclick="setDatePreset('weekend')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white">Upcoming Weekend</button>
+              <button type="button" onclick="setDatePreset('today')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white transition">Today</button>
+              <button type="button" onclick="setDatePreset('tomorrow')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white transition">Tomorrow</button>
+              <button type="button" onclick="setDatePreset('weekend')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white transition">Upcoming Weekend</button>
             </div>
           </div>
 
           <!-- Location with Mumbai Quick Chips -->
           <div>
             <label class="block text-[11px] font-semibold text-slate-300 mb-1">Location</label>
-            <input type="text" id="location-input" placeholder="e.g. Bandra / CST / Goregaon Nesco" class="w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500" oninput="triggerUpdate()">
+            <input type="text" id="location-input" placeholder="e.g. Bandra / CST / Goregaon Nesco" class="w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500 transition" oninput="triggerUpdate()">
           </div>
         </div>
 
@@ -268,13 +284,13 @@
         <div>
           <label class="block text-[11px] font-semibold text-slate-300 mb-1">Tap items you are renting:</label>
           <div class="flex border-b border-brand-border gap-1 text-[11px] mb-2 font-medium">
-            <button type="button" onclick="switchGearTab('cameras')" id="tab-cameras" class="px-2.5 py-1 text-blue-400 border-b-2 border-blue-400">Cameras</button>
+            <button type="button" onclick="switchGearTab('cameras')" id="tab-cameras" class="px-2.5 py-1 text-blue-400 border-b-2 border-blue-400 font-bold">Cameras</button>
             <button type="button" onclick="switchGearTab('lenses')" id="tab-lenses" class="px-2.5 py-1 text-slate-400">Lenses</button>
             <button type="button" onclick="switchGearTab('lights')" id="tab-lights" class="px-2.5 py-1 text-slate-400">Lights & Audio</button>
           </div>
 
           <!-- Gear Chips Container -->
-          <div id="gear-tab-content" class="flex flex-wrap gap-1.5 min-h-[50px] p-1 bg-brand-input/40 rounded-xl border border-brand-border/60">
+          <div id="gear-tab-content" class="flex flex-wrap gap-1.5 min-h-[50px] p-1.5 bg-brand-input/40 rounded-xl border border-brand-border/60">
             <!-- Injected by JS -->
           </div>
         </div>
@@ -283,9 +299,7 @@
         <div>
           <label class="block text-[11px] font-semibold text-slate-300 mb-1.5">Selected Rentals & Rates (Enter manual price):</label>
           <div id="selected-rentals-container" class="space-y-2">
-            <div class="text-[11px] text-slate-500 italic p-2 bg-brand-input/30 rounded-lg text-center">
-              No equipment selected. Tap chips above to add.
-            </div>
+            <!-- Injected by JS -->
           </div>
 
           <!-- Total Equipment Rent Summary Strip -->
@@ -351,7 +365,7 @@
     </div>
 
 
-    <!-- RIGHT COLUMN: 4. COPY-READY MESSAGE CARD (MATCHING USER SCREENSHOT) -->
+    <!-- RIGHT COLUMN: 4. COPY-READY MESSAGE CARD -->
     <div class="lg:col-span-5" id="preview-section">
       
       <div class="bg-[#101726] border border-blue-500/30 rounded-2xl p-4 sm:p-5 shadow-2xl flex flex-col sticky top-20">
@@ -383,13 +397,16 @@ Deliverables:
 With edit (yes/no) : Yes
 
 Out Source Rental Equipment : 
+16-35 2.8:- 500
+A7M4:- 
+Total Rent:- ₹500
 Equipment Vendor:- ADITYA
 
 Outsource team : - 
 
-Total Amount: ₹
-Advance Paid: ₹
-Pending Amount: ₹
+Total Amount: 
+Advance Paid: 
+Pending Amount: 
 
 Notes: 
           </pre>
@@ -401,12 +418,12 @@ Notes:
           <span id="copy-btn-label">Message Copy Karo</span>
         </button>
 
-        <!-- Secondary Mobile WhatsApp Direct Open -->
+        <!-- Secondary WhatsApp Direct Open & History Save -->
         <div class="grid grid-cols-2 gap-2 mt-2.5">
-          <button type="button" onclick="sendDirectWhatsApp()" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+          <button type="button" onclick="sendDirectWhatsApp()" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95">
             <i data-lucide="send" class="w-3.5 h-3.5"></i> Open in WhatsApp
           </button>
-          <button type="button" onclick="saveToRecentLogs()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 border border-brand-border transition">
+          <button type="button" onclick="saveToRecentLogs()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 border border-brand-border transition active:scale-95">
             <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Save in History
           </button>
         </div>
@@ -428,7 +445,7 @@ Notes:
 
   </main>
 
-  <!-- MOBILE BOTTOM STICKY BAR (Only visible on small screens for quick action) -->
+  <!-- MOBILE BOTTOM STICKY BAR -->
   <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F17]/95 backdrop-blur-md border-t border-brand-border p-2.5 flex items-center gap-2">
     <button type="button" onclick="copyToClipboard()" class="flex-1 py-3 rounded-xl bg-[#5E8BFF] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/20 active:scale-95 transition">
       <span>📋</span> Message Copy Karo
@@ -441,7 +458,7 @@ Notes:
 
   <!-- APPLICATION JAVASCRIPT LOGIC -->
   <script>
-    // 1. REPEAT CLIENTS DATABASE (From PDF Data)
+    // 1. REPEAT CLIENTS DATABASE (From Fayora Films records)
     const REPEAT_CLIENTS = [
       { name: "DOT", phone: "8591325894", defaultType: "BAR CONTENT / REEL" },
       { name: "Aryan Nalawade", phone: "9821036274", defaultType: "UGC REEL" },
@@ -463,7 +480,7 @@ Notes:
       { name: "CUSTOM", phone: "", defaultType: "" }
     ];
 
-    // 2. SHOOT TYPES (From Services screenshot & PDF)
+    // 2. SHOOT TYPES (From Services records)
     const SHOOT_TYPES = [
       "Reel", "UGC Reel", "Store Visit Reel", "Influencer Reel", "BTS Reel",
       "Phone Reel", "Organic Reel", "Commercial Ad", "Cinematographer Only",
@@ -471,13 +488,13 @@ Notes:
       "Proposal Reel & Photos", "Politician Video Coverage", "Bar Content"
     ];
 
-    // 3. MUMBAI QUICK LOCATIONS (From PDF)
+    // 3. MUMBAI QUICK LOCATIONS
     const QUICK_LOCATIONS = [
       "Goregaon", "Andheri West", "Bandra", "CST / Fort", "BKC",
       "Lower Parel", "Borivali", "Thane", "Khar Road", "Worli", "Dadar", "All over Mumbai"
     ];
 
-    // 4. DELIVERABLES (From Services screenshot)
+    // 4. DELIVERABLES
     const DELIVERABLES_LIST = [
       { id: "del-reel-1", text: "1 Reel (9:16)", checked: true },
       { id: "del-reel-2", text: "2 Reels (9:16)", checked: false },
@@ -491,7 +508,7 @@ Notes:
       { id: "del-only-shoot", text: "Only Shoot (No Edit)", checked: false }
     ];
 
-    // 5. EQUIPMENT INVENTORY (From Validation Screenshots)
+    // 5. EQUIPMENT INVENTORY
     const GEAR_CATALOG = {
       cameras: [
         "A7M4", "A7M3", "A7M4 (2nd)", "Sony M3", "A7R4", "CANON R6", "CANON 5D"
@@ -593,6 +610,30 @@ Notes:
       triggerUpdate();
     }
 
+    // Interactive Calendar Picker Handlers
+    function openCalendarPicker() {
+      const picker = document.getElementById("native-date-picker");
+      if (picker) {
+        if (typeof picker.showPicker === 'function') {
+          picker.showPicker();
+        } else {
+          picker.focus();
+          picker.click();
+        }
+      }
+    }
+
+    function handleCalendarSelection(val) {
+      if (!val) return;
+      const parts = val.split('-'); // YYYY-MM-DD
+      if (parts.length === 3) {
+        const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        document.getElementById("shoot-date").value = formatted;
+        triggerUpdate();
+        showToast(`Date set: ${formatted}`);
+      }
+    }
+
     // Date Presets
     function setDatePreset(preset) {
       const d = new Date();
@@ -606,6 +647,11 @@ Notes:
       const month = String(d.getMonth() + 1).padStart(2, '0');
       const year = d.getFullYear();
       document.getElementById("shoot-date").value = `${day}/${month}/${year}`;
+      
+      const isoFormatted = `${year}-${month}-${day}`;
+      const picker = document.getElementById("native-date-picker");
+      if (picker) picker.value = isoFormatted;
+      
       triggerUpdate();
     }
 
@@ -688,7 +734,7 @@ Notes:
       if (selectedRentals.hasOwnProperty(name)) {
         delete selectedRentals[name];
       } else {
-        selectedRentals[name] = ""; // empty initial rate
+        selectedRentals[name] = ""; // empty initial rate for manual entry
       }
       renderGearTab(currentGearTab);
       renderSelectedRentals();
@@ -810,7 +856,7 @@ Notes:
       // 8. With Edit
       const withEdit = withEditState;
 
-      // 9. Rental Equipment lines
+      // 9. Rental Equipment lines + Total Rent
       const rentalKeys = Object.keys(selectedRentals);
       let rentalLines = "";
       const { sum: totalRentSum, hasAnyRate } = getCalculatedTotalRent();
@@ -821,10 +867,10 @@ Notes:
           return `${k}:- ${rate}`;
         }).join("\n");
 
-        const rentTotalLine = hasAnyRate ? `\nTotal Rent:- ₹${totalRentSum}` : `\nTotal Rent:- `;
+        const rentTotalLine = hasAnyRate ? `Total Rent:- ₹${totalRentSum}` : `Total Rent:- `;
         rentalLines = `${itemLines}\n${rentTotalLine}`;
       } else {
-        rentalLines = "No renting\n\nTotal Rent:- ₹0";
+        rentalLines = "No renting\nTotal Rent:- ₹0";
       }
 
       // Vendor
@@ -844,7 +890,7 @@ Notes:
       // 12. Notes
       const notes = document.getElementById("booking-notes").value.trim();
 
-      // Final Template Assembly matching user requirement
+      // Final Template Assembly matching WhatsApp template
       return `🎬 PRODUCTION BOOKING
 
 Client Name: ${clientName}
@@ -882,7 +928,7 @@ Notes: ${notes}`;
       document.getElementById("copy-preview-text").innerText = msg;
     }
 
-    // 1-Click Clipboard Copy (Supports iFrame / Mobile Web)
+    // 1-Click Clipboard Copy
     function copyToClipboard() {
       const text = generateWhatsAppMessage();
       
