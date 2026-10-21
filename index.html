@@ -5,6 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Fayora Films — Production Booking OS</title>
 
+  <!-- PWA & Mobile Home Screen Shortcut App Icons -->
+  <meta name="theme-color" content="#080C14">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fayora Booking">
+
+  <!-- Direct Favicon & Apple/Android Home Screen Icons from logo.png -->
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="shortcut icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="logo.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="logo.png">
+
+  <!-- Dynamic Web App Manifest Injection with logo.png for Android Chrome Shortcut -->
+  <script>
+    (function injectManifest() {
+      try {
+        const manifest = {
+          name: "Fayora Films — Production Booking OS",
+          short_name: "Fayora Booking",
+          start_url: window.location.href,
+          display: "standalone",
+          background_color: "#080C14",
+          theme_color: "#080C14",
+          icons: [
+            { src: "logo.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+            { src: "logo.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
+          ]
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = manifestUrl;
+        document.head.appendChild(link);
+      } catch (e) {
+        console.warn('Manifest injection fallback', e);
+      }
+    })();
+  </script>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -88,8 +132,12 @@
   <header class="sticky top-0 z-40 bg-[#0B0F17]/95 backdrop-blur-md border-b border-brand-border px-4 py-3">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-2.5">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-black text-sm shadow-md shadow-blue-500/20">
-          FF
+        <!-- Logo Display with Fallback -->
+        <div class="relative w-9 h-9 sm:w-10 sm:h-10">
+          <img src="logo.png" alt="Fayora Logo" class="w-full h-full rounded-xl object-contain bg-[#111726] border border-brand-border shadow-md" onerror="this.classList.add('hidden'); document.getElementById('logo-fallback').classList.remove('hidden');">
+          <div id="logo-fallback" class="hidden w-full h-full rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-md shadow-blue-500/20">
+            FF
+          </div>
         </div>
         <div>
           <h1 class="text-sm sm:text-base font-bold text-white tracking-tight flex items-center gap-1.5">
