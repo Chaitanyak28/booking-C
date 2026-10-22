@@ -208,6 +208,7 @@
         </div>
       </section>
 
+
       <!-- STEP 2: SHOOT DETAILS (DATE WITH CALENDAR PICKER, TYPE, LOCATION) -->
       <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
         <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
@@ -237,7 +238,7 @@
             <div class="relative flex items-center">
               <input type="text" id="shoot-date" placeholder="DD/MM/YYYY or 24-25/08/2026" class="w-full bg-brand-input border border-brand-border rounded-xl pl-3 pr-11 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-blue-500 transition" oninput="triggerUpdate()">
               
-              <!-- Interactive Calendar Icon Button -->
+              <!-- Interactive Calendar Icon Button (where circled) -->
               <div class="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center">
                 <button type="button" onclick="openCalendarPicker()" class="p-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 hover:text-white border border-blue-500/30 transition flex items-center justify-center" title="Open Calendar">
                   <i data-lucide="calendar" class="w-4 h-4"></i>
@@ -270,6 +271,7 @@
         </div>
       </section>
 
+
       <!-- STEP 3: DELIVERABLES & EDITING -->
       <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
         <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
@@ -295,6 +297,7 @@
           <input type="text" id="custom-deliverable" placeholder="+ Add custom deliverable item (press Enter)" class="mt-2 w-full bg-brand-input border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500" onkeydown="handleCustomDeliverableKey(event)">
         </div>
       </section>
+
 
       <!-- STEP 4: RENTAL EQUIPMENT & FLUCTUATING RATES -->
       <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
@@ -361,6 +364,7 @@
         </div>
       </section>
 
+
       <!-- STEP 5: TOTAL, ADVANCE, PENDING & NOTES -->
       <section class="bg-brand-card border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
         <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
@@ -408,11 +412,13 @@
 
     </div>
 
+
     <!-- RIGHT COLUMN: 4. COPY-READY MESSAGE CARD -->
     <div class="lg:col-span-5" id="preview-section">
+      
       <div class="bg-[#101726] border border-blue-500/30 rounded-2xl p-4 sm:p-5 shadow-2xl flex flex-col sticky top-20">
         
-        <!-- Header -->
+        <!-- Header matching Screenshot -->
         <div class="flex items-center justify-between pb-3 border-b border-brand-border/80 mb-3">
           <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
             <span>4. Copy-ready message</span>
@@ -420,7 +426,7 @@
           <span class="text-[10px] bg-blue-500/15 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30 font-medium">WhatsApp Sync</span>
         </div>
 
-        <!-- Monospace Text Area Box -->
+        <!-- Monospace Text Area Box matching Screenshot -->
         <div class="relative bg-[#090D16] border border-slate-800 rounded-xl p-3 sm:p-4 mb-4">
           <pre id="copy-preview-text" class="font-mono-code text-[12px] leading-relaxed text-slate-200 whitespace-pre-wrap select-all max-h-[460px] overflow-y-auto smooth-scroll pr-1 font-normal">
 🎬 PRODUCTION BOOKING
@@ -454,10 +460,10 @@ Notes:
           </pre>
         </div>
 
-        <!-- Updated Button: Copy Booking Text -->
-        <button id="copy-btn" type="button" onclick="copyToClipboard()" class="w-full py-3.5 px-4 rounded-xl bg-[#5E8BFF] hover:bg-[#4D7CFA] active:bg-[#3B6BE8] text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-xl shadow-blue-600/30 transition transform active:scale-[0.98]">
-          <span id="copy-btn-icon" class="text-lg">📋</span>
-          <span id="copy-btn-label">Copy Booking Text</span>
+        <!-- Big Blue Copy Button (Matching user screenshot: "Message Copy Karo") -->
+        <button type="button" onclick="copyToClipboard()" class="w-full py-3.5 px-4 rounded-xl bg-[#5E8BFF] hover:bg-[#4D7CFA] active:bg-[#3B6BE8] text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-xl shadow-blue-600/30 transition transform active:scale-[0.98]">
+          <span class="text-lg">📋</span>
+          <span id="copy-btn-label">Message Copy Karo</span>
         </button>
 
         <!-- Secondary WhatsApp Direct Open & History Save -->
@@ -482,24 +488,25 @@ Notes:
         </div>
 
       </div>
+
     </div>
 
   </main>
 
-  <!-- MOBILE BOTTOM STICKY BAR (Updated to Copy Booking Text) -->
+  <!-- MOBILE BOTTOM STICKY BAR -->
   <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F17]/95 backdrop-blur-md border-t border-brand-border p-2.5 flex items-center gap-2">
-    <button id="mobile-copy-btn" type="button" onclick="copyToClipboard()" class="flex-1 py-3 rounded-xl bg-[#5E8BFF] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/20 active:scale-95 transition">
-      <span id="mobile-copy-icon">📋</span>
-      <span id="mobile-copy-label">Copy Booking Text</span>
+    <button type="button" onclick="copyToClipboard()" class="flex-1 py-3 rounded-xl bg-[#5E8BFF] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/20 active:scale-95 transition">
+      <span>📋</span> Message Copy Karo
     </button>
     <button type="button" onclick="sendDirectWhatsApp()" class="w-12 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition">
       <i data-lucide="send" class="w-5 h-5"></i>
     </button>
   </div>
 
+
   <!-- APPLICATION JAVASCRIPT LOGIC -->
   <script>
-    // 1. REPEAT CLIENTS DATABASE
+    // 1. REPEAT CLIENTS DATABASE (From Fayora Films records)
     const REPEAT_CLIENTS = [
       { name: "DOT", phone: "8591325894", defaultType: "BAR CONTENT / REEL" },
       { name: "Aryan Nalawade", phone: "9821036274", defaultType: "UGC REEL" },
@@ -521,7 +528,7 @@ Notes:
       { name: "CUSTOM", phone: "", defaultType: "" }
     ];
 
-    // 2. SHOOT TYPES
+    // 2. SHOOT TYPES (From Services records)
     const SHOOT_TYPES = [
       "Reel", "UGC Reel", "Store Visit Reel", "Influencer Reel", "BTS Reel",
       "Phone Reel", "Organic Reel", "Commercial Ad", "Cinematographer Only",
@@ -775,7 +782,7 @@ Notes:
       if (selectedRentals.hasOwnProperty(name)) {
         delete selectedRentals[name];
       } else {
-        selectedRentals[name] = "";
+        selectedRentals[name] = ""; // empty initial rate for manual entry
       }
       renderGearTab(currentGearTab);
       renderSelectedRentals();
@@ -816,19 +823,17 @@ Notes:
           </div>
         </div>
       `).join('');
-      
       lucide.createIcons();
       updateRentalTotal();
     }
 
-    // Calculate total equipment rent sum safely
+    // Calculate total equipment rent sum
     function getCalculatedTotalRent() {
       const keys = Object.keys(selectedRentals);
       let sum = 0;
       let hasAnyRate = false;
       keys.forEach(k => {
-        const val = String(selectedRentals[k] || '').trim();
-        const numericVal = parseFloat(val);
+        const numericVal = parseFloat(selectedRentals[k]);
         if (!isNaN(numericVal) && numericVal > 0) {
           sum += numericVal;
           hasAnyRate = true;
@@ -841,7 +846,7 @@ Notes:
       const { sum, hasAnyRate } = getCalculatedTotalRent();
       const displayEl = document.getElementById("rental-total-display");
       if (displayEl) {
-        displayEl.innerText = hasAnyRate ? sum.toLocaleString('en-IN') : "0";
+        displayEl.innerText = hasAnyRate ? sum : "0";
       }
     }
 
@@ -870,25 +875,36 @@ Notes:
 
     // ASSEMBLE EXACT WHATSAPP MESSAGE FORMAT
     function generateWhatsAppMessage() {
+      // 1. Client Name
       const clientSelect = document.getElementById("client-select").value;
       const clientName = clientSelect === "CUSTOM"
         ? (document.getElementById("custom-client-input").value.trim() || "")
         : (clientSelect || "");
 
+      // 2. Event Name
       const eventName = document.getElementById("event-name").value.trim();
+
+      // 3. Contact No
       const contactNo = document.getElementById("contact-no").value.trim();
 
+      // 4. Shoot Type
       const customShootType = document.getElementById("custom-shoot-type").value.trim();
       const shootType = customShootType || selectedShootType;
 
+      // 5. Shoot Date
       const shootDate = document.getElementById("shoot-date").value.trim();
+
+      // 6. Location
       const location = document.getElementById("location-input").value.trim();
 
+      // 7. Deliverables bullet points
       const selectedDeliverables = DELIVERABLES_LIST.filter(d => d.checked).map(d => `• ${d.text}`);
       const deliverablesText = selectedDeliverables.length > 0 ? selectedDeliverables.join("\n") : "• ";
 
+      // 8. With Edit
       const withEdit = withEditState;
 
+      // 9. Rental Equipment lines + Total Rent
       const rentalKeys = Object.keys(selectedRentals);
       let rentalLines = "";
       const { sum: totalRentSum, hasAnyRate } = getCalculatedTotalRent();
@@ -905,19 +921,24 @@ Notes:
         rentalLines = "No renting\nTotal Rent:- ₹0";
       }
 
+      // Vendor
       const vendorSelect = document.getElementById("vendor-select").value;
       const vendorName = vendorSelect === "CUSTOM"
         ? (document.getElementById("custom-vendor-input").value.trim() || "ADITYA")
         : vendorSelect;
 
+      // 10. Outsource team
       const outsourceTeam = document.getElementById("outsource-team").value.trim();
 
+      // 11. Finance
       const totalAmount = document.getElementById("total-amount").value.trim();
       const advancePaid = document.getElementById("advance-paid").value.trim();
       const pendingAmount = document.getElementById("pending-amount").value.trim();
 
+      // 12. Notes
       const notes = document.getElementById("booking-notes").value.trim();
 
+      // Final Template Assembly matching WhatsApp template
       return `🎬 PRODUCTION BOOKING
 
 Client Name: ${clientName}
@@ -955,7 +976,7 @@ Notes: ${notes}`;
       document.getElementById("copy-preview-text").innerText = msg;
     }
 
-    // 1-Click Clipboard Copy (Both Desktop & Mobile Buttons)
+    // 1-Click Clipboard Copy
     function copyToClipboard() {
       const text = generateWhatsAppMessage();
       
@@ -968,30 +989,21 @@ Notes: ${notes}`;
       textArea.focus();
       textArea.select();
 
+      let ok = false;
       try {
-        document.execCommand('copy');
-      } catch (err) {}
+        ok = document.execCommand('copy');
+      } catch (err) {
+        ok = false;
+      }
       document.body.removeChild(textArea);
 
-      // Label feedback for both buttons
+      // Button Label animation
       const btnLabel = document.getElementById("copy-btn-label");
-      const btnIcon = document.getElementById("copy-btn-icon");
-      const mobLabel = document.getElementById("mobile-copy-label");
-      const mobIcon = document.getElementById("mobile-copy-icon");
+      const origText = btnLabel.innerText;
+      btnLabel.innerText = "Copied to Clipboard! ✓";
+      setTimeout(() => { btnLabel.innerText = origText; }, 2000);
 
-      if (btnLabel) btnLabel.innerText = "Copied to Clipboard! ✓";
-      if (btnIcon) btnIcon.innerText = "✅";
-      if (mobLabel) mobLabel.innerText = "Copied! ✓";
-      if (mobIcon) mobIcon.innerText = "✅";
-
-      setTimeout(() => { 
-        if (btnLabel) btnLabel.innerText = "Copy Booking Text";
-        if (btnIcon) btnIcon.innerText = "📋";
-        if (mobLabel) mobLabel.innerText = "Copy Booking Text";
-        if (mobIcon) mobIcon.innerText = "📋";
-      }, 2000);
-
-      showToast("Booking message copy ho gaya! WhatsApp pe send karein.");
+      showToast("Message Copy Ho Gaya! WhatsApp pe paste karein.");
     }
 
     // Direct WhatsApp send
